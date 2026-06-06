@@ -1,0 +1,313 @@
+Last login: Thu May 21 20:50:08 on ttys000
+(base) sohankumar@Sohans-MacBook-Pro ~ % cd ~/Desktop/assignment2
+(base) sohankumar@Sohans-MacBook-Pro assignment2 % ls
+assignment2_shakespeare_rag.py		embeddings_cache.npz			Project Demo Video.mov
+CSCI933_A2_Report_Latex_Code.zip	evaluation_chart.png			shakespeare_slm_dataset
+CSCI933_A2_Report.pdf			evaluation_results.csv
+(base) sohankumar@Sohans-MacBook-Pro assignment2 % pip install sentence-transformers transformers torch scikit-learn pandas matplotlib seaborn accelerate rank_bm25
+Requirement already satisfied: sentence-transformers in /opt/anaconda3/lib/python3.13/site-packages (5.5.1)
+Requirement already satisfied: transformers in /opt/anaconda3/lib/python3.13/site-packages (5.9.0)
+Requirement already satisfied: torch in /opt/anaconda3/lib/python3.13/site-packages (2.12.0)
+Requirement already satisfied: scikit-learn in /opt/anaconda3/lib/python3.13/site-packages (1.7.2)
+Requirement already satisfied: pandas in /opt/anaconda3/lib/python3.13/site-packages (2.3.3)
+Requirement already satisfied: matplotlib in /opt/anaconda3/lib/python3.13/site-packages (3.10.6)
+Requirement already satisfied: seaborn in /opt/anaconda3/lib/python3.13/site-packages (0.13.2)
+Requirement already satisfied: accelerate in /opt/anaconda3/lib/python3.13/site-packages (1.13.0)
+Requirement already satisfied: rank_bm25 in /opt/anaconda3/lib/python3.13/site-packages (0.2.2)
+Requirement already satisfied: huggingface-hub>=0.23.0 in /opt/anaconda3/lib/python3.13/site-packages (from sentence-transformers) (1.15.0)
+Requirement already satisfied: numpy>=1.20.0 in /opt/anaconda3/lib/python3.13/site-packages (from sentence-transformers) (2.3.5)
+Requirement already satisfied: scipy>=1.0.0 in /opt/anaconda3/lib/python3.13/site-packages (from sentence-transformers) (1.16.3)
+Requirement already satisfied: typing_extensions>=4.5.0 in /opt/anaconda3/lib/python3.13/site-packages (from sentence-transformers) (4.15.0)
+Requirement already satisfied: tqdm>=4.0.0 in /opt/anaconda3/lib/python3.13/site-packages (from sentence-transformers) (4.67.1)
+Requirement already satisfied: packaging>=20.0 in /opt/anaconda3/lib/python3.13/site-packages (from transformers) (25.0)
+Requirement already satisfied: pyyaml>=5.1 in /opt/anaconda3/lib/python3.13/site-packages (from transformers) (6.0.3)
+Requirement already satisfied: regex>=2025.10.22 in /opt/anaconda3/lib/python3.13/site-packages (from transformers) (2026.5.9)
+Requirement already satisfied: tokenizers<=0.23.0,>=0.22.0 in /opt/anaconda3/lib/python3.13/site-packages (from transformers) (0.22.2)
+Requirement already satisfied: typer in /opt/anaconda3/lib/python3.13/site-packages (from transformers) (0.20.0)
+Requirement already satisfied: safetensors>=0.4.3 in /opt/anaconda3/lib/python3.13/site-packages (from transformers) (0.7.0)
+Requirement already satisfied: filelock>=3.10.0 in /opt/anaconda3/lib/python3.13/site-packages (from huggingface-hub>=0.23.0->sentence-transformers) (3.20.0)
+Requirement already satisfied: fsspec>=2023.5.0 in /opt/anaconda3/lib/python3.13/site-packages (from huggingface-hub>=0.23.0->sentence-transformers) (2025.10.0)
+Requirement already satisfied: hf-xet<2.0.0,>=1.4.3 in /opt/anaconda3/lib/python3.13/site-packages (from huggingface-hub>=0.23.0->sentence-transformers) (1.5.0)
+Requirement already satisfied: httpx<1,>=0.23.0 in /opt/anaconda3/lib/python3.13/site-packages (from huggingface-hub>=0.23.0->sentence-transformers) (0.28.1)
+Requirement already satisfied: anyio in /opt/anaconda3/lib/python3.13/site-packages (from httpx<1,>=0.23.0->huggingface-hub>=0.23.0->sentence-transformers) (4.10.0)
+Requirement already satisfied: certifi in /opt/anaconda3/lib/python3.13/site-packages (from httpx<1,>=0.23.0->huggingface-hub>=0.23.0->sentence-transformers) (2026.1.4)
+Requirement already satisfied: httpcore==1.* in /opt/anaconda3/lib/python3.13/site-packages (from httpx<1,>=0.23.0->huggingface-hub>=0.23.0->sentence-transformers) (1.0.9)
+Requirement already satisfied: idna in /opt/anaconda3/lib/python3.13/site-packages (from httpx<1,>=0.23.0->huggingface-hub>=0.23.0->sentence-transformers) (3.11)
+Requirement already satisfied: h11>=0.16 in /opt/anaconda3/lib/python3.13/site-packages (from httpcore==1.*->httpx<1,>=0.23.0->huggingface-hub>=0.23.0->sentence-transformers) (0.16.0)
+Requirement already satisfied: setuptools<82 in /opt/anaconda3/lib/python3.13/site-packages (from torch) (80.9.0)
+Requirement already satisfied: sympy>=1.13.3 in /opt/anaconda3/lib/python3.13/site-packages (from torch) (1.14.0)
+Requirement already satisfied: networkx>=2.5.1 in /opt/anaconda3/lib/python3.13/site-packages (from torch) (3.5)
+Requirement already satisfied: jinja2 in /opt/anaconda3/lib/python3.13/site-packages (from torch) (3.1.6)
+Requirement already satisfied: joblib>=1.2.0 in /opt/anaconda3/lib/python3.13/site-packages (from scikit-learn) (1.5.2)
+Requirement already satisfied: threadpoolctl>=3.1.0 in /opt/anaconda3/lib/python3.13/site-packages (from scikit-learn) (3.5.0)
+Requirement already satisfied: python-dateutil>=2.8.2 in /opt/anaconda3/lib/python3.13/site-packages (from pandas) (2.9.0.post0)
+Requirement already satisfied: pytz>=2020.1 in /opt/anaconda3/lib/python3.13/site-packages (from pandas) (2025.2)
+Requirement already satisfied: tzdata>=2022.7 in /opt/anaconda3/lib/python3.13/site-packages (from pandas) (2025.2)
+Requirement already satisfied: contourpy>=1.0.1 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib) (1.3.3)
+Requirement already satisfied: cycler>=0.10 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib) (0.11.0)
+Requirement already satisfied: fonttools>=4.22.0 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib) (4.60.1)
+Requirement already satisfied: kiwisolver>=1.3.1 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib) (1.4.9)
+Requirement already satisfied: pillow>=8 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib) (12.0.0)
+Requirement already satisfied: pyparsing>=2.3.1 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib) (3.2.5)
+Requirement already satisfied: psutil in /opt/anaconda3/lib/python3.13/site-packages (from accelerate) (7.0.0)
+Requirement already satisfied: six>=1.5 in /opt/anaconda3/lib/python3.13/site-packages (from python-dateutil>=2.8.2->pandas) (1.17.0)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in /opt/anaconda3/lib/python3.13/site-packages (from sympy>=1.13.3->torch) (1.3.0)
+Requirement already satisfied: click>=8.0.0 in /opt/anaconda3/lib/python3.13/site-packages (from typer->transformers) (8.2.1)
+Requirement already satisfied: shellingham>=1.3.0 in /opt/anaconda3/lib/python3.13/site-packages (from typer->transformers) (1.5.4)
+Requirement already satisfied: rich>=10.11.0 in /opt/anaconda3/lib/python3.13/site-packages (from typer->transformers) (14.2.0)
+Requirement already satisfied: markdown-it-py>=2.2.0 in /opt/anaconda3/lib/python3.13/site-packages (from rich>=10.11.0->typer->transformers) (2.2.0)
+Requirement already satisfied: pygments<3.0.0,>=2.13.0 in /opt/anaconda3/lib/python3.13/site-packages (from rich>=10.11.0->typer->transformers) (2.19.2)
+Requirement already satisfied: mdurl~=0.1 in /opt/anaconda3/lib/python3.13/site-packages (from markdown-it-py>=2.2.0->rich>=10.11.0->typer->transformers) (0.1.2)
+Requirement already satisfied: sniffio>=1.1 in /opt/anaconda3/lib/python3.13/site-packages (from anyio->httpx<1,>=0.23.0->huggingface-hub>=0.23.0->sentence-transformers) (1.3.0)
+Requirement already satisfied: MarkupSafe>=2.0 in /opt/anaconda3/lib/python3.13/site-packages (from jinja2->torch) (3.0.2)
+(base) sohankumar@Sohans-MacBook-Pro assignment2 % python assignment2_shakespeare_rag.py --dataset ./shakespeare_slm_dataset
+
+╔══════════════════════════════════════════════════════════╗
+║  CSCI933 Assignment 2 — Shakespeare RAG System       ║
+╚══════════════════════════════════════════════════════════╝
+  Dataset : /Users/sohankumar/Desktop/assignment2/shakespeare_slm_dataset
+  Device  : cpu
+  Top-K   : 3
+  Cache   : embeddings_cache.npz (use if exists)
+
+[1/5] Loading dataset...
+  73 retrieval chunks from 3 plays
+
+[2/5] Building embedding index...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights: 100%|██████████████████████████████████████████████████████████████| 103/103 [00:00<00:00, 6130.98it/s]
+  Loaded cached embeddings from embeddings_cache.npz  (73, 384)
+
+[3/5] Initialising retrievers...
+  Dense (MiniLM-L6-v2) + TF-IDF baseline ready.
+
+[4/5] Loading generative model...
+  Loading google/flan-t5-large on cpu...
+Loading weights: 100%|██████████████████████████████████████████████████████████████| 558/558 [00:00<00:00, 5117.20it/s]
+[transformers] The tied weights mapping and config for this model specifies to tie shared.weight to lm_head.weight, but both are present in the checkpoints with different values, so we will NOT tie them. You should update the config with `tie_word_embeddings=False` to silence this warning.
+  783M parameters loaded.
+
+[5/5] Running evaluation on all 11 questions...
+
+==============================================================================
+[Q1] Why does Macbeth kill Duncan?
+Play: Macbeth  |  Type: contextual_qa
+------------------------------------------------------------------------------
+
+  ── BASELINE ──
+  Sources : Macbeth Act 1 Scene 6 /// Macbeth Act 3 Scene 4 /// Macbeth Act 2 Scene 2
+  Answer  :
+    Duncan arrives at Macbeth’s castle, unaware of the planned betrayal.
+    Banquo’s ghost appears at Macbeth’s banquet, revealing Macbeth’s
+    instability. Macbeth murders Duncan, and the couple reacts to guilt and
+    fear.
+
+  ── RAG ──
+  Sources : Macbeth Act 2 Sc 2 (score=0.746): Macbeth murders Duncan, and the couple reacts to guilt and fear. /
+  Answer  :
+    Because he is a traitor to Malcolm and Cawdor. He kills Duncan because he
+    has a grudge against Malcolm.
+
+==============================================================================
+[Q3] Why does Hamlet delay taking revenge?
+Play: Hamlet  |  Type: contextual_qa
+------------------------------------------------------------------------------
+
+  ── BASELINE ──
+  Sources : Hamlet Act 5 Scene 2 /// Hamlet Act 3 Scene 2 /// Hamlet Act 4 Scene 2
+  Answer  :
+    The duel ends in multiple deaths; Hamlet kills Claudius and Fortinbras
+    takes control. The play-within-a-play unsettles Claudius. Hamlet refuses
+    to reveal where Polonius’s body is.
+
+  ── RAG ──
+  Sources : Hamlet Act 4 Sc 4 (score=0.709): Hamlet compares himself to Fortinbras and criticises his delay. ///
+  Answer  :
+    Hamlet finds Claudius praying but delays killing him because he doesn't
+    want to let his madness range.
+
+==============================================================================
+[Q5] Why is Juliet conflicted after Romeo kills Tybalt?
+Play: Romeo and Juliet  |  Type: contextual_qa
+------------------------------------------------------------------------------
+
+  ── BASELINE ──
+  Sources : Romeo and Juliet Act 3 Scene 2 /// Romeo and Juliet Act 2 Scene 2 /// Romeo and Juliet Act 3 Scene 1
+  Answer  :
+    Juliet learns Romeo killed Tybalt and is torn between love and family
+    loyalty. Romeo and Juliet confess love and plan marriage in the balcony
+    scene. Tybalt kills Mercutio; Romeo kills Tybalt and is banished.
+
+  ── RAG ──
+  Sources : Romeo and Juliet Act 3 Sc 2 (score=0.815): Juliet learns Romeo killed Tybalt and is torn between lov
+  Answer  :
+    Juliet is torn between love and family loyalty because Romeo killed
+    Tybalt.
+
+==============================================================================
+[G5] Generate a short Shakespearean-style response from Hamlet reflecting on his father's death.
+Play: Hamlet  |  Type: stylised_generation
+------------------------------------------------------------------------------
+
+  ── BASELINE ──
+  Sources : Hamlet Act 1 Scene 2 /// Hamlet Act 3 Scene 2 /// Hamlet Act 5 Scene 2
+  Answer  :
+    Claudius addresses the court; Hamlet mourns and resents Gertrude’s
+    remarriage. The play-within-a-play unsettles Claudius. The duel ends in
+    multiple deaths; Hamlet kills Claudius and Fortinbras takes control.
+
+  ── RAG ──
+  Sources : Hamlet Act 5 Sc 1 (score=0.643): Hamlet reflects on death in the graveyard and confronts Laertes at 
+  Answer  :
+    Hamlet. I'm sorry to hear of your father's death. I hope he'll be well
+    soon.
+
+ Evaluation CSV saved → evaluation_results.csv
+
+Chart saved → evaluation_chart.png
+
+Mean scores:
+          Correctness  Grounding  Retrieval Rel.  Usefulness  Overall
+system                                                               
+baseline         1.91       1.00            2.27        1.91     1.77
+rag              3.91       3.64            4.36        3.82     3.93
+
+============================================================
+Shakespeare-Aware RAG Chatbot
+Commands:  quit | style <question> | baseline <question>
+Default  : RAG answer
+============================================================
+
+Question: Why does Macbeth kill Duncan?
+
+Retrieved evidence:
+  • Macbeth Act 2 Sc 2 (score=0.746): Macbeth murders Duncan, and the couple reacts to guilt and fear.
+  • Macbeth Act 1 Sc 4 (score=0.743): Duncan names Malcolm heir, creating an obstacle to Macbeth’s ambit
+  • Macbeth Act 5 Sc 1 (score=0.730): Lady Macbeth sleepwalks and reveals torment over Duncan’s murder.
+
+Answer:
+  Because he is a traitor to Malcolm and Cawdor. He kills Duncan because he
+  has a grudge against Malcolm.
+
+Question: How does Macbeth change after becoming king?
+
+Retrieved evidence:
+  • Macbeth Act 3 Sc 6 (score=0.654): Scottish nobles discuss Macbeth’s tyranny and hope for resistance.
+  • Macbeth Act 1 Sc 4 (score=0.649): Duncan names Malcolm heir, creating an obstacle to Macbeth’s ambit
+  • Macbeth Act 5 Sc 7 (score=0.640): Macbeth fights desperately, trusting the prophecy.
+
+Answer:
+  They have tied him to a stake, but bear-like he must fight the course.
+
+Question: Why does Hamlet delay taking revenge?
+
+Retrieved evidence:
+  • Hamlet Act 4 Sc 4 (score=0.709): Hamlet compares himself to Fortinbras and criticises his delay.
+  • Hamlet Act 1 Sc 4 (score=0.678): Hamlet waits for the ghost and follows it.
+  • Hamlet Act 3 Sc 3 (score=0.642): Hamlet finds Claudius praying but delays killing him.
+
+Answer:
+  Hamlet finds Claudius praying but delays killing him because he doesn't want
+  to let his madness range.
+
+Question: What is Ophelia's role in the tragedy?
+
+Retrieved evidence:
+  • Hamlet Act 4 Sc 5 (score=0.719): Ophelia’s madness and Laertes’s return deepen the crisis.
+  • Hamlet Act 3 Sc 1 (score=0.650): Hamlet reflects on existence, rejects Ophelia, and Claudius suspect
+  • Hamlet Act 4 Sc 7 (score=0.647): Claudius and Laertes plot Hamlet’s death; Ophelia’s drowning is rep
+
+Answer:
+  Madness and Laertes's return deepen the crisis and Ophelia's drowning is
+  reported.
+
+Question: Why is Juliet conflicted after Romeo kills Tybalt?
+
+Retrieved evidence:
+  • Romeo and Juliet Act 3 Sc 2 (score=0.815): Juliet learns Romeo killed Tybalt and is torn between lov
+  • Romeo and Juliet Act 3 Sc 1 (score=0.739): Tybalt kills Mercutio; Romeo kills Tybalt and is banished
+  • Romeo and Juliet Act 5 Sc 1 (score=0.727): Romeo hears Juliet is dead and buys poison.
+
+Answer:
+  Juliet is torn between love and family loyalty because Romeo killed Tybalt.
+
+Question: Who is the Ghost in Hamlet and what does he reveal?
+
+Retrieved evidence:
+  • Hamlet Act 1 Sc 4 (score=0.788): Hamlet waits for the ghost and follows it.
+  • Hamlet Act 1 Sc 1 (score=0.778): Guards and Horatio see the ghost and decide to tell Hamlet.
+  • Hamlet Act 5 Sc 1 (score=0.623): Hamlet reflects on death in the graveyard and confronts Laertes at 
+
+Answer:
+  Hamlet, Horatio, and Marcellus is the Ghost in Hamlet and he reveals that
+  the air bites shrewdly.
+
+Question: What role do the three witches play in Macbeth?
+
+Retrieved evidence:
+  • Macbeth Act 4 Sc 1 (score=0.687): The witches give Macbeth ambiguous prophecies that make him overco
+  • Macbeth Act 1 Sc 1 (score=0.673): The witches gather and set up the play’s atmosphere of moral confu
+  • Macbeth Act 1 Sc 3 (score=0.660): The witches greet Macbeth with prophecies that awaken his ambition
+
+Answer:
+  The witches give Macbeth ambiguous prophecies that make him overconfident.
+
+Question: How does Friar Lawrence contribute to the tragedy of Romeo and Juliet?
+
+Retrieved evidence:
+  • Romeo and Juliet Act 3 Sc 3 (score=0.719): Romeo despairs over banishment while Friar Laurence gives
+  • Romeo and Juliet Act 4 Sc 1 (score=0.667): Juliet seeks help and receives Friar Laurence’s potion pl
+  • Romeo and Juliet Act 5 Sc 1 (score=0.647): Romeo hears Juliet is dead and buys poison.
+
+Answer:
+  Friar Laurence gives advice to Romeo and Juliet on how to deal with
+  calamity.
+
+Question: baseline Why does Macbeth kill Duncan?
+
+Retrieved evidence:
+  • Macbeth Act 1 Scene 6
+  • Macbeth Act 3 Scene 4
+  • Macbeth Act 2 Scene 2
+
+Answer:
+  Duncan arrives at Macbeth’s castle, unaware of the planned betrayal.
+  Banquo’s ghost appears at Macbeth’s banquet, revealing Macbeth’s
+  instability. Macbeth murders Duncan, and the couple reacts to guilt and
+  fear.
+
+Question: style Generate a short Shakespearean-style response from Hamlet reflecting on his father's death.
+
+Retrieved evidence:
+  • Hamlet Act 5 Sc 1 (score=0.643): Hamlet reflects on death in the graveyard and confronts Laertes at 
+  • Hamlet Act 1 Sc 3 (score=0.570): Laertes and Polonius warn Ophelia about Hamlet.
+  • Hamlet Act 3 Sc 1 (score=0.522): Hamlet reflects on existence, rejects Ophelia, and Claudius suspect
+
+Answer:
+  Hamlet. I'm sorry to hear of your father's death. I hope he'll be well soon.
+
+Question: Who is Shakespeare?
+
+Retrieved evidence:
+  • (out-of-domain — answered from general knowledge)
+
+Answer:
+  William Shakespeare (1564-1616) was an English playwright and poet, widely
+  regarded as the greatest writer in the English language. He wrote
+  approximately 37 plays including Hamlet, Macbeth, and Romeo and Juliet. This
+  system answers questions about the content of his plays — try asking about a
+  character, scene, or event.
+
+Question: Who are the main characters of Merchant of Venice?
+
+Retrieved evidence:
+  • (play not in dataset)
+
+Answer:
+  This system only covers Hamlet, Macbeth, and Romeo and Juliet. The play you
+  asked about is not in the dataset.
+
+Question: quit
+
+ Done.
+(base) sohankumar@Sohans-MacBook-Pro assignment2 % 
