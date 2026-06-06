@@ -1,0 +1,443 @@
+\documentclass[10pt,conference]{IEEEtran}
+
+% ============================================================
+% Packages
+% ============================================================
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{times}
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{minted}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue
+}
+
+\setlist[itemize]{leftmargin=*, itemsep=2pt, topsep=2pt}
+\setlist[enumerate]{leftmargin=*, itemsep=2pt, topsep=2pt}
+\setminted{fontsize=\footnotesize,breaklines=true,frame=single,autogobble=true}
+
+% ============================================================
+
+% ============================================================
+% Title
+% ============================================================
+\title{
+Assignment 2 Report Template:\\
+Domain Adaptation with Small Language Models
+}
+
+\author{
+\IEEEauthorblockN{
+Group Number: \emph{Insert Group Number}
+}
+\IEEEauthorblockA{
+CSCI433/933 Machine Learning Algorithms and Applications\\
+Student Names and Student Numbers: \emph{Insert Details}\\
+}
+}
+
+\begin{document}
+\maketitle
+
+% ============================================================
+% Page Limit Notice
+% ============================================================
+\begin{center}
+\fbox{
+\begin{minipage}{0.94\linewidth}
+\textbf{Main Report Page Limit:} The main report must not exceed \textbf{10 pages}, in the style of IEEE conference submissions. 
+The 10-page (absolute) limit applies from the abstract through the conclusion.
+References, appendices, full evaluation tables, extended prompts, and the GenAI usage log are excluded from the 10-page limit.
+Marks are awarded for clarity, technical depth, evidence, and quality of reasoning, not for length.
+\end{minipage}
+}
+\end{center}
+
+% ============================================================
+% Abstract
+% ============================================================
+\begin{abstract}
+Briefly summarise the problem, the system developed, the model/RAG approach used, the dataset, the evaluation method, and the main findings. 
+This should be approximately 150--200 words.
+\end{abstract}
+
+% ============================================================
+\section{Introduction and Problem Formulation}
+\label{sec:introduction}
+
+\textbf{Relevant marks: Problem formulation and task understanding (10 marks).}
+
+Explain the purpose of the project. 
+Describe the task as a domain adaptation problem involving a pretrained Small Language Model (SLM), Shakespearean text, retrieval-augmented generation, and beginner-friendly explanation.
+
+Your introduction should address:
+
+\begin{itemize}
+    \item what problem your system is trying to solve;
+    \item why Shakespearean text presents a domain adaptation challenge;
+    \item who the intended user is;
+    \item what your system is expected to do;
+    \item what constraints shaped your design.
+\end{itemize}
+
+Avoid writing a long generic literature review. 
+Focus on the specific problem, system objective, and assignment requirements.
+
+% ============================================================
+\section{Dataset and Preprocessing}
+\label{sec:dataset}
+
+\textbf{Relevant marks: Dataset preparation and documentation (15 marks).}
+
+Describe the dataset used in the project. 
+At minimum, explain how the three required plays were represented and prepared:
+
+\begin{itemize}
+    \item \textit{Hamlet};
+    \item \textit{Macbeth};
+    \item \textit{Romeo and Juliet}.
+\end{itemize}
+
+You should describe:
+
+\begin{itemize}
+    \item the structure of the dataset;
+    \item whether you used utterance-level, scene-level, or other chunking;
+    \item metadata retained, such as play, act, scene, speaker, and source identifier;
+    \item any cleaning, filtering, or normalisation performed;
+    \item any supplementary material used, such as summaries or glossaries;
+    \item how primary text was distinguished from supporting explanatory material.
+\end{itemize}
+
+\subsection{Dataset Schema}
+
+Provide a concise description of your processed data format. 
+For example:
+
+\begin{minted}{json}
+{
+  "play": "Macbeth",
+  "act": 1,
+  "scene": 3,
+  "speaker": "MACBETH",
+  "text": "So foul and fair a day I have not seen.",
+  "source_id": "macbeth_1_3_macbeth_001"
+}
+\end{minted}
+
+\subsection{Chunking Strategy}
+
+Explain your chunking strategy and justify why it is suitable for retrieval. 
+Discuss any trade-offs between short chunks, which may be precise but lack context, and longer chunks, which may preserve context but reduce retrieval specificity.
+
+% ============================================================
+\section{Methodology}
+\label{sec:methodology}
+
+\textbf{Relevant marks: Model adaptation and RAG methodology (20 marks).}
+
+Describe your technical approach. 
+This section should explain both your baseline system and your improved RAG-based system.
+
+\subsection{Baseline System}
+
+Describe the baseline system used for comparison. 
+This may be a prompt-only model, a simple retrieval-only system, or another minimal approach.
+
+You should explain:
+
+\begin{itemize}
+    \item what the baseline does;
+    \item what model or tool it uses;
+    \item what information it has access to;
+    \item why it is a fair baseline for comparison.
+\end{itemize}
+
+\subsection{RAG-Based System}
+
+Describe your retrieval-augmented generation pipeline. 
+At minimum, explain:
+
+\begin{itemize}
+    \item embedding model used;
+    \item retrieval/indexing method used;
+    \item number of retrieved chunks used for generation;
+    \item prompt structure;
+    \item language model used for generation;
+    \item how retrieved context is incorporated into the generated answer.
+\end{itemize}
+
+\subsection{Model Choice and Justification}
+
+Justify your choice of model. 
+Discuss how your approach reflects the principles of small, deployable, or resource-constrained language-model systems.
+
+If you used a hosted model, explain why this was appropriate and how the rest of your system design still reflects the assignment's SLM constraints.
+
+% ============================================================
+\section{System Design and Implementation}
+\label{sec:system}
+
+\textbf{Relevant marks: System implementation and usability (15 marks).}
+
+Describe the implemented system clearly enough that a reader can understand how the components interact.
+
+Include a system diagram if useful.
+
+\subsection{System Pipeline}
+
+Describe the end-to-end flow:
+
+\begin{enumerate}
+    \item user query;
+    \item query embedding;
+    \item retrieval of relevant passages;
+    \item prompt construction;
+    \item response generation;
+    \item evidence display;
+    \item logging or evaluation output.
+\end{enumerate}
+
+\subsection{Implementation Details}
+
+Summarise the main implementation details:
+
+\begin{itemize}
+    \item programming language and libraries;
+    \item repository structure;
+    \item how to run the system;
+    \item dependencies;
+    \item any cached embeddings or indices;
+    \item limitations of the implementation.
+\end{itemize}
+
+Do not paste large blocks of code in the main report. 
+Place important snippets only where they support explanation. 
+Long code fragments should be placed in the repository, not in the report.
+
+% ============================================================
+\section{Evaluation Design}
+\label{sec:evaluation-design}
+
+\textbf{Relevant marks: Evaluation, comparison, and error analysis (20 marks).}
+
+Describe your evaluation protocol.
+
+\subsection{Evaluation Questions}
+
+State how many questions were used and distinguish between:
+
+\begin{itemize}
+    \item instructor-provided questions;
+    \item group-designed questions.
+\end{itemize}
+
+Briefly explain what your group-designed questions were intended to test.
+
+\subsection{Scoring Criteria}
+
+Define the scoring scale used for each criterion. 
+For example, if you use a 1--5 scale, define what scores 1, 3, and 5 mean.
+
+Your evaluation should include:
+
+\begin{itemize}
+    \item correctness;
+    \item grounding;
+    \item retrieval relevance;
+    \item usefulness for a beginner;
+    \item style quality, where applicable.
+\end{itemize}
+
+\subsection{Evaluation Table Format}
+
+A compact summary table may be included in the main report. 
+Full detailed evaluation tables should be placed in the appendix.
+
+\begin{table}[h]
+\centering
+\caption{Example compact evaluation summary.}
+\label{tab:evaluation-summary}
+\begin{tabularx}{\linewidth}{lccc}
+\toprule
+System & Correctness & Grounding & Usefulness \\
+\midrule
+Baseline & \emph{score} & \emph{score} & \emph{score} \\
+RAG System & \emph{score} & \emph{score} & \emph{score} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+% ============================================================
+\section{Results and Analysis}
+\label{sec:results}
+
+\textbf{Relevant marks: Evaluation, comparison, and error analysis (20 marks).}
+
+Present and interpret the results. 
+Do not merely list outputs. 
+Explain what the results show about the strengths and weaknesses of your system.
+
+\subsection{Baseline versus RAG Comparison}
+
+Compare the baseline system with the improved RAG-based system.
+
+Discuss:
+
+\begin{itemize}
+    \item whether RAG improved factual correctness;
+    \item whether retrieved evidence improved answer grounding;
+    \item cases where RAG helped;
+    \item cases where RAG did not help;
+    \item any unexpected behaviour.
+\end{itemize}
+
+\subsection{Qualitative Examples}
+
+Include a small number of representative examples. 
+For each example, show:
+
+\begin{itemize}
+    \item the user question;
+    \item retrieved evidence;
+    \item generated response;
+    \item your interpretation of the result.
+\end{itemize}
+
+Keep examples concise in the main report. 
+Longer examples should be placed in the appendix.
+
+\subsection{Failure Analysis}
+
+Discuss at least three failure cases. 
+Possible failure types include:
+
+\begin{itemize}
+    \item irrelevant retrieval;
+    \item incomplete retrieval;
+    \item hallucinated answer;
+    \item over-stylised or unclear response;
+    \item correct answer but weak evidence;
+    \item beginner-unfriendly explanation;
+    \item confusion between plays or characters.
+\end{itemize}
+
+For each failure case, explain what went wrong and how it might be improved.
+
+% ============================================================
+\section{Responsible Use of Generative AI}
+\label{sec:genai}
+
+\textbf{Relevant marks: Responsible and transparent GenAI usage (10 marks).}
+
+Summarise how generative AI tools were used in this project.
+
+You should describe:
+
+\begin{itemize}
+    \item what tools were used;
+    \item what they were used for;
+    \item how outputs were verified;
+    \item what was accepted, modified, rejected, or improved;
+    \item how the group ensured that submitted work reflects its own understanding.
+\end{itemize}
+
+The full GenAI usage log may be placed in an appendix or submitted as a separate file.
+
+% ============================================================
+\section{Conclusion}
+\label{sec:conclusion}
+
+Summarise what was achieved, what was learned, and what limitations remain.
+
+Your conclusion should address:
+
+\begin{itemize}
+    \item whether the system met the assignment objectives;
+    \item what the evaluation revealed;
+    \item what design choices were most important;
+    \item what you would improve with more time.
+\end{itemize}
+
+% ============================================================
+% References
+% ============================================================
+\begin{thebibliography}{1}
+
+\bibitem{placeholder}
+Replace this placeholder with the references used in your report.
+Students may alternatively use BibTeX by replacing this environment with:
+\texttt{\textbackslash bibliographystyle\{IEEEtran\}} and
+\texttt{\textbackslash bibliography\{references\}}.
+
+\end{thebibliography}
+
+% ============================================================
+% Appendices
+% ============================================================
+\appendices
+
+\section{Full Evaluation Table}
+\label{app:evaluation}
+
+Include the full evaluation results here.
+
+\begin{table*}[h]
+\centering
+\caption{Full evaluation table template.}
+\label{tab:full-eval}
+\begin{tabularx}{\textwidth}{p{2.5cm} p{2.5cm} p{2cm} p{2cm} p{2cm} X}
+\toprule
+Question & Expected Focus & Correctness & Grounding & Usefulness & Comments \\
+\midrule
+\emph{Insert question} & \emph{Insert focus} & \emph{Score} & \emph{Score} & \emph{Score} & \emph{Comment} \\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+\section{Representative Prompts}
+\label{app:prompts}
+
+Include important prompts used for retrieval, answer generation, style control, and evaluation.
+
+\begin{minted}{text}
+[Insert system prompt or RAG prompt here.]
+\end{minted}
+
+\section{Additional Output Examples}
+\label{app:outputs}
+
+Include additional examples that support your analysis but do not fit within the 10-page main report.
+
+\section{GenAI Usage Log}
+\label{app:genai-log}
+
+The GenAI usage log should include enough information to make the group's use of AI transparent and assessable.
+
+\begin{table*}[h]
+\centering
+\caption{GenAI usage log template.}
+\label{tab:genai-log}
+\begin{tabularx}{\textwidth}{p{2.2cm} p{3.0cm} p{3.0cm} X}
+\toprule
+Tool & Prompt or Task & Useful Output & Verification / Modification \\
+\midrule
+\emph{Tool name} & \emph{Prompt summary} & \emph{Response summary} & \emph{How it was checked or modified} \\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+\end{document}
